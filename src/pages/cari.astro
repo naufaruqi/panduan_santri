@@ -1,0 +1,350 @@
+
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { withBase } from "../utils/site";
+---
+
+<BaseLayout
+  title="Cari Artikel | RUANG ILMU"
+  description="Temukan artikel dan catatan pengetahuan di RUANG ILMU."
+>
+  <section class="space-y-6">
+    <!-- Judul halaman -->
+    <div>
+      <p class="text-sm font-semibold text-brand-600">
+        RUANG ILMU
+      </p>
+
+      <h1 class="mt-2 text-3xl font-bold tracking-tight text-slate-900">
+        Cari Artikel
+      </h1>
+
+      <p class="mt-2 text-slate-600">
+        Temukan tulisan berdasarkan judul, deskripsi,
+        isi artikel, atau kategori.
+      </p>
+    </div>
+
+    <!-- Form pencarian -->
+    <form
+      id="search-form"
+      action={withBase("/cari")}
+      method="GET"
+      class="space-y-3"
+    >
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        placeholder="Contoh: Ushul Fikih, Astro, hadis..."
+        class="w-full rounded-xl border border-slate-300 px-4 py-3 outline-none focus:border-brand-600 focus:ring-2 focus:ring-brand-100"
+      />
+
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <select
+          id="category-filter"
+          name="category"
+          class="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm sm:flex-1"
+        >
+          <option value="">Semua kategori</option>
+          <option value="Al-Qur'an Hadis">Al-Qur'an Hadis</option>
+          <option value="Ushul Fikih">Ushul Fikih</option>
+          <option value="Akhlak Tasawuf">Akhlak Tasawuf</option>
+          <option value="Astro">Astro</option>
+          <option value="JavaScript">JavaScript</option>
+          <option value="Pemrograman">Pemrograman</option>
+          <option value="Refleksi">Refleksi</option>
+        </select>
+
+        <button
+          type="submit"
+          class="rounded-lg bg-brand-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-700"
+        >
+          Cari Artikel
+        </button>
+      </div>
+    </form>
+
+    <!-- Hasil pencarian -->
+    <div class="border-t border-slate-200 pt-5">
+      <p
+        id="result-info"
+        class="mb-4 text-sm text-slate-500"
+      >
+        Memuat indeks artikel...
+      </p>
+
+      <div
+        id="search-results"
+        class="space-y-4"
+      ></div>
+    </div>
+  </section>
+</BaseLayout>
+
+<!-- JavaScript pencarian -->
+<script>
+  import { withBase } from "../utils/site";
+
+  interface SearchArticle {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    author: string;
+    pubDate: string;
+    readingTime: number;
+    body: string;
+  }
+
+  // Mengambil elemen HTML
+  const form = document.querySelector<HTMLFormElement>(
+    "#search-form"
+  );
+
+  const input = document.querySelector<HTMLInputElement>(
+    "#search-input"
+  );
+
+  const categoryFilter =
+    document.querySelector<HTMLSelectElement>(
+      "#category-filter"
+    );
+
+  const resultInfo =
+    document.querySelector<HTMLParagraphElement>(
+      "#result-info"
+    );
+
+  const resultsContainer =
+    document.querySelector<HTMLDivElement>(
+      "#search-results"
+    );
+
+  // Menampung data artikel dari JSON
+  let articles: SearchArticle[] = [];
+
+  // Fungsi untuk mencari dan menampilkan artikel
+  function renderResults() {
+    if (
+      !resultsContainer ||
+      !resultInfo ||
+      !input ||
+      !categoryFilter
+    ) {
+      return;
+    }
+
+    const query = input.value
+      .trim()
+      .toLocaleLowerCase("id");
+
+    const category = categoryFilter.value;
+
+    // Memecah kata kunci pencarian
+    const keywords = query
+      .split(/\s+/)
+      .filter(Boolean);
+
+    // Menyeleksi artikel
+    const results = articles.filter((article) => {
+      const searchableText = [
+        article.title,
+        article.description,
+        article.category,
+        article.body
+      ]
+        .join(" ")
+        .toLocaleLowerCase("id");
+
+      // Semua kata kunci harus ditemukan
+      const matchesQuery = keywords.every((keyword) =>
+        searchableText.includes(keyword)
+      );
+
+      // Memeriksa kategori
+      const matchesCategory =
+        !category || article.category === category;
+
+      return matchesQuery && matchesCategory;
+    });
+
+    // Mengosongkan hasil sebelumnya
+    resultsContainer.replaceChildren();
+
+    // Menampilkan jumlah hasil
+    resultInfo.textContent = query || category
+      ? `${results.length} artikel ditemukan.`
+      : `${articles.length} artikel tersedia.`;
+
+    // Jika tidak ada hasil
+    if (results.length === 0) {
+      const empty = document.createElement("p");
+
+      empty.className =
+        "rounded-lg bg-slate-50 p-5 text-sm text-slate-500";
+
+      empty.textContent =
+        "Tidak ada artikel yang cocok dengan pencarian.";
+
+      resultsContainer.append(empty);
+
+      return;
+    }
+
+    // Membuat kartu setiap artikel
+    results.forEach((article) => {
+      const card = document.createElement("article");
+
+      card.className =
+        "rounded-xl border border-slate-200 p-5 transition hover:border-brand-300 hover:shadow-sm";
+
+      // Kategori
+      const categoryLabel = document.createElement("p");
+
+      categoryLabel.className =
+        "text-xs font-semibold text-brand-600";
+
+      categoryLabel.textContent = article.category;
+
+      // Judul artikel
+      const title = document.createElement("a");
+
+      title.className =
+        "mt-2 block text-lg font-bold text-slate-900 hover:text-brand-600";
+
+      title.href =
+        withBase(`/artikel/${encodeURIComponent(article.id)}`);
+
+      title.textContent = article.title;
+
+      // Deskripsi
+      const description = document.createElement("p");
+
+      description.className =
+        "mt-2 text-sm leading-6 text-slate-600";
+
+      description.textContent = article.description;
+
+      // Tanggal dan waktu membaca
+      const metadata = document.createElement("p");
+
+      metadata.className =
+        "mt-3 text-xs text-slate-400";
+
+      const date = new Date(article.pubDate)
+        .toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric"
+        });
+
+      metadata.textContent =
+        `${date} · ${article.readingTime} menit membaca`;
+
+      // Memasukkan elemen ke kartu
+      card.append(
+        categoryLabel,
+        title,
+        description,
+        metadata
+      );
+
+      // Memasukkan kartu ke halaman
+      resultsContainer.append(card);
+    });
+  }
+
+  // Mengambil indeks artikel dari JSON
+  async function initializeSearch() {
+    if (!input || !categoryFilter || !resultInfo) {
+      return;
+    }
+
+    try {
+      const response = await fetch(withBase("/search-index.json"));
+
+      if (!response.ok) {
+        throw new Error("Gagal mengambil indeks artikel.");
+      }
+
+      articles = await response.json();
+
+      // Membaca parameter URL
+      const params = new URLSearchParams(
+        window.location.search
+      );
+
+      input.value = params.get("q") ?? "";
+
+      categoryFilter.value =
+        params.get("category") ?? "";
+
+      // Menampilkan hasil pertama
+      renderResults();
+
+    } catch (error) {
+      resultInfo.textContent =
+        "Indeks pencarian gagal dimuat. Silakan muat ulang halaman.";
+
+      console.error(error);
+    }
+  }
+
+  // Menangani submit form
+  form?.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    const params = new URLSearchParams();
+
+    if (input?.value.trim()) {
+      params.set("q", input.value.trim());
+    }
+
+    if (categoryFilter?.value) {
+      params.set("category", categoryFilter.value);
+    }
+
+    const queryString = params.toString();
+
+    history.pushState(
+      {},
+      "",
+      queryString
+        ? withBase(`/cari?${queryString}`)
+        : withBase("/cari")
+    );
+
+    renderResults();
+  });
+
+  // Pencarian langsung saat mengetik
+  input?.addEventListener("input", renderResults);
+
+  // Filter langsung saat kategori berubah
+  categoryFilter?.addEventListener(
+    "change",
+    renderResults
+  );
+
+  // Menangani tombol Back dan Forward browser
+  window.addEventListener("popstate", () => {
+    const params = new URLSearchParams(
+      window.location.search
+    );
+
+    if (input) {
+      input.value = params.get("q") ?? "";
+    }
+
+    if (categoryFilter) {
+      categoryFilter.value =
+        params.get("category") ?? "";
+    }
+
+    renderResults();
+  });
+
+  // Menjalankan pencarian saat halaman dibuka
+  initializeSearch();
+</script>
