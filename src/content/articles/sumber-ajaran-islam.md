@@ -33,7 +33,7 @@ Berikut merupakan ilustrasi yang berkaitan dengan pembahasan.
 <figure>
 
   <img
-    src="/images/artikel/contoh-al-quran.jpg"
+    src="/panduan_santri/images/artikel/contoh-al-quran.jpg"
     alt="Ilustrasi mushaf Al-Qur'an"
     loading="lazy"
   />
