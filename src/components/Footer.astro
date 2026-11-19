@@ -1,4 +1,8 @@
 
+---
+import { withBase } from "../utils/site";
+---
+
 <footer class="border-t border-slate-200 bg-slate-50">
   <div class="mx-auto flex max-w-[1440px] flex-col gap-3 px-4 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between lg:px-8">
 
@@ -8,11 +12,11 @@
     </p>
 
     <nav class="flex gap-5">
-      <a href="/tentang" class="hover:text-brand-600">
+      <a href={withBase("/tentang")} class="hover:text-brand-600">
         Tentang
       </a>
 
-      <a href="/kontak" class="hover:text-brand-600">
+      <a href={withBase("/kontak")} class="hover:text-brand-600">
         Kontak
       </a>
     </nav>

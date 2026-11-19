@@ -5,6 +5,7 @@ import {
   categories,
   categoryGroups
 } from "../data/categories";
+import { withBase } from "../utils/site";
 
 const articles = (await getCollection("articles"))
   .filter((article) => article.data.draft === false)
@@ -23,7 +24,7 @@ const articles = (await getCollection("articles"))
     </h2>
 
     <a
-      href="/"
+      href={withBase("/")}
       class="mb-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-brand-600"
     >
       <span>⌂</span>
@@ -62,7 +63,7 @@ const articles = (await getCollection("articles"))
               return (
                 <div>
                   <a
-                    href={`/kategori/${category.slug}`}
+                    href={withBase(`/kategori/${category.slug}`)}
                     class="block py-1 text-sm font-medium text-slate-600 transition hover:text-brand-600"
                   >
                     {category.name}
@@ -73,7 +74,7 @@ const articles = (await getCollection("articles"))
                       {categoryArticles.map((article) => (
                         <li>
                           <a
-                            href={`/artikel/${article.id}`}
+                            href={withBase(`/artikel/${article.id}`)}
                             class="block rounded-md px-2 py-1 text-xs leading-5 text-slate-500 transition hover:bg-brand-50 hover:text-brand-700"
                           >
                             {article.data.title}

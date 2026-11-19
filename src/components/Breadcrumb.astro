@@ -1,4 +1,6 @@
 ---
+import { withBase } from "../utils/site";
+
 interface BreadcrumbItem {
   label: string;
   href?: string;
@@ -18,7 +20,7 @@ const { items } = Astro.props;
         {index > 0 && <span aria-hidden="true">/</span>}
 
         {item.href && index !== items.length - 1 ? (
-          <a href={item.href} class="transition hover:text-brand-600">
+          <a href={withBase(item.href)} class="transition hover:text-brand-600">
             {item.label}
           </a>
         ) : (

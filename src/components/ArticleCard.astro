@@ -1,6 +1,7 @@
 ---
 import CategoryBadge from "./CategoryBadge.astro";
 import ArticleMeta from "./ArticleMeta.astro";
+import { withBase } from "../utils/site";
 
 interface Props {
   title: string;
@@ -35,7 +36,7 @@ const {
 
   <h2 class="mb-2 text-xl font-bold tracking-tight text-slate-900">
     <a
-      href={href}
+      href={withBase(href)}
       class="transition group-hover:text-brand-600"
     >
       {title}

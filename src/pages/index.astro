@@ -5,6 +5,7 @@ import ArticleCard from "../components/ArticleCard.astro";
 import Breadcrumb from "../components/Breadcrumb.astro";
 import { getCategoryByName } from "../data/categories";
 import { getCollection } from "astro:content";
+import { withBase } from "../utils/site";
 
 const articles = (await getCollection("articles"))
   .filter((article) => article.data.draft === false)
@@ -49,7 +50,7 @@ const articles = (await getCollection("articles"))
         </h2>
 
         <a
-          href="/artikel"
+          href={withBase("/artikel")}
           class="text-sm font-medium text-brand-600 hover:underline"
         >
           Semua artikel
