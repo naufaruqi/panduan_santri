@@ -1,0 +1,96 @@
+---
+import { getCollection } from "astro:content";
+
+import {
+  categories,
+  categoryGroups
+} from "../data/categories";
+
+const articles = (await getCollection("articles"))
+  .filter((article) => article.data.draft === false)
+  .sort(
+    (a, b) =>
+      b.data.pubDate.valueOf() -
+      a.data.pubDate.valueOf()
+  );
+---
+
+<aside class="space-y-6">
+
+  <div>
+    <h2 class="mb-4 text-xs font-bold uppercase tracking-wider text-slate-400">
+      Jelajahi Ruang Ilmu
+    </h2>
+
+    <a
+      href="/"
+      class="mb-4 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-brand-600"
+    >
+      <span>⌂</span>
+      Beranda
+    </a>
+  </div>
+
+  <nav aria-label="Navigasi kategori" class="space-y-4">
+
+    {categoryGroups.map((group) => {
+      const groupCategories = categories.filter(
+        (category) => category.group === group
+      );
+
+      return (
+        <details open class="group">
+          <summary class="flex cursor-pointer list-none items-center justify-between py-2 text-sm font-semibold text-slate-700">
+            <span class="flex items-center gap-2">
+              <span>📁</span>
+              {group}
+            </span>
+
+            <span class="text-xs text-slate-400 transition group-open:rotate-90">
+              ▶
+            </span>
+          </summary>
+
+          <div class="ml-3 mt-2 space-y-3 border-l border-slate-200 pl-3">
+
+            {groupCategories.map((category) => {
+              const categoryArticles = articles.filter(
+                (article) =>
+                  article.data.category === category.name
+              );
+
+              return (
+                <div>
+                  <a
+                    href={`/kategori/${category.slug}`}
+                    class="block py-1 text-sm font-medium text-slate-600 transition hover:text-brand-600"
+                  >
+                    {category.name}
+                  </a>
+
+                  {categoryArticles.length > 0 && (
+                    <ul class="ml-2 mt-1 space-y-1">
+                      {categoryArticles.map((article) => (
+                        <li>
+                          <a
+                            href={`/artikel/${article.id}`}
+                            class="block rounded-md px-2 py-1 text-xs leading-5 text-slate-500 transition hover:bg-brand-50 hover:text-brand-700"
+                          >
+                            {article.data.title}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+
+          </div>
+        </details>
+      );
+    })}
+
+  </nav>
+
+</aside>

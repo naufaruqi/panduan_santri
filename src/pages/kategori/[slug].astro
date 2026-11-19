@@ -1,0 +1,107 @@
+---
+import { getCollection } from "astro:content";
+
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import Breadcrumb from "../../components/Breadcrumb.astro";
+
+import { categories } from "../../data/categories";
+
+export async function getStaticPaths() {
+  const articles = await getCollection(
+    "articles",
+    ({ data }) => data.draft === false
+  );
+
+  return categories.map((category) => ({
+    params: {
+      slug: category.slug
+    },
+
+    props: {
+      category,
+      articles: articles
+        .filter(
+          (article) =>
+            article.data.category === category.name
+        )
+        .sort(
+          (a, b) =>
+            b.data.pubDate.valueOf() -
+            a.data.pubDate.valueOf()
+        )
+    }
+  }));
+}
+
+const { category, articles } = Astro.props;
+---
+
+<BaseLayout
+  title={`${category.name} | RUANG ILMU`}
+  description={category.description}
+>
+  <div class="mx-auto max-w-3xl">
+
+    <Breadcrumb
+      items={[
+        { label: "Beranda", href: "/" },
+        { label: category.group },
+        { label: category.name }
+      ]}
+    />
+
+    <header class="mb-8 border-b border-slate-200 pb-8">
+      <p class="mb-3 text-sm font-semibold text-brand-600">
+        KATEGORI ARTIKEL
+      </p>
+
+      <h1 class="mb-3 text-3xl font-bold tracking-tight text-slate-900">
+        {category.name}
+      </h1>
+
+      <p class="leading-8 text-slate-600">
+        {category.description}
+      </p>
+
+      <p class="mt-4 text-sm text-slate-400">
+        {articles.length} artikel
+      </p>
+    </header>
+
+    <section>
+      {articles.length > 0 ? (
+        articles.map((article) => (
+          <ArticleCard
+            title={article.data.title}
+            description={article.data.description}
+            href={`/artikel/${article.id}`}
+            category={article.data.category}
+            categoryHref={`/kategori/${category.slug}`}
+            author={article.data.author}
+            date={article.data.pubDate.toLocaleDateString(
+              "id-ID",
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+              }
+            )}
+            readingTime={article.data.readingTime}
+          />
+        ))
+      ) : (
+        <div class="rounded-xl border border-dashed border-slate-300 p-8 text-center">
+          <p class="font-medium text-slate-700">
+            Belum ada artikel dalam kategori ini.
+          </p>
+
+          <p class="mt-2 text-sm text-slate-500">
+            Artikel baru akan ditampilkan di sini.
+          </p>
+        </div>
+      )}
+    </section>
+
+  </div>
+</BaseLayout>

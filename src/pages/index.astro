@@ -1,16 +1,82 @@
+
 ---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ArticleCard from "../components/ArticleCard.astro";
+import Breadcrumb from "../components/Breadcrumb.astro";
+import { getCategoryByName } from "../data/categories";
+import { getCollection } from "astro:content";
+
+const articles = (await getCollection("articles"))
+  .filter((article) => article.data.draft === false)
+  .sort(
+    (a, b) =>
+      b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+  );
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  title="RUANG ILMU"
+  description="Catatan dan dokumentasi pengetahuan"
+>
+  <div class="mx-auto max-w-3xl">
+
+    <Breadcrumb
+      items={[
+        { label: "Beranda" }
+      ]}
+    />
+
+    <header class="mb-8 border-b border-slate-200 pb-8">
+      <p class="mb-3 text-sm font-semibold text-brand-600">
+        CATATAN PENGETAHUAN
+      </p>
+
+      <h1 class="mb-4 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+        Selamat Datang di Ruang Ilmu
+      </h1>
+
+      <p class="max-w-2xl leading-8 text-slate-600">
+        Ruang untuk mencatat, mempelajari, dan berbagi pengetahuan
+        tentang pendidikan, keislaman, teknologi, dan berbagai
+        pemikiran lainnya.
+      </p>
+    </header>
+
+    <section>
+      <div class="mb-4 flex items-center justify-between">
+        <h2 class="text-xl font-bold text-slate-900">
+          Artikel Terbaru
+        </h2>
+
+        <a
+          href="/artikel"
+          class="text-sm font-medium text-brand-600 hover:underline"
+        >
+          Semua artikel
+        </a>
+      </div>
+
+      <div>
+  {articles.map((article) => (
+    <ArticleCard
+      title={article.data.title}
+      description={article.data.description}
+      href={`/artikel/${article.id}`}
+      category={article.data.category}
+      categoryHref={
+  `/kategori/${getCategoryByName(article.data.category)?.slug ?? ""}`
+}
+      author={article.data.author}
+      date={article.data.pubDate.toLocaleDateString("id-ID", {
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      })}
+      readingTime={article.data.readingTime}
+    />
+  ))}
+</div>
+    </section>
+
+  </div>
+</BaseLayout>

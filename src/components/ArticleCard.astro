@@ -1,0 +1,54 @@
+---
+import CategoryBadge from "./CategoryBadge.astro";
+import ArticleMeta from "./ArticleMeta.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  href: string;
+  category: string;
+  categoryHref?: string;
+  author: string;
+  date: string;
+  readingTime?: number;
+}
+
+const {
+  title,
+  description,
+  href,
+  category,
+  categoryHref,
+  author,
+  date,
+  readingTime = 5
+} = Astro.props;
+---
+
+<article class="group border-b border-slate-200 py-6 last:border-b-0">
+  <div class="mb-3">
+    <CategoryBadge
+      name={category}
+      href={categoryHref}
+    />
+  </div>
+
+  <h2 class="mb-2 text-xl font-bold tracking-tight text-slate-900">
+    <a
+      href={href}
+      class="transition group-hover:text-brand-600"
+    >
+      {title}
+    </a>
+  </h2>
+
+  <p class="mb-4 text-sm leading-7 text-slate-600">
+    {description}
+  </p>
+
+  <ArticleMeta
+    author={author}
+    date={date}
+    readingTime={readingTime}
+  />
+</article>

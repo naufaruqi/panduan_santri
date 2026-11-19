@@ -1,0 +1,89 @@
+
+---
+import Header from "../components/Header.astro";
+import LeftSidebar from "../components/LeftSidebar.astro";
+import RightSidebar from "../components/RightSidebar.astro";
+import Footer from "../components/Footer.astro";
+import MobileNavigation from "../components/MobileNavigation.astro";
+
+import "../styles/global.css";
+
+interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+interface Props {
+  title?: string;
+  description?: string;
+  headings?: Heading[];
+}
+
+const {
+  title = "RUANG ILMU",
+  description = "Catatan dan dokumentasi pengetahuan",
+  headings = []
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+  </head>
+
+  <body class="min-h-screen">
+    
+<!-- HEADER -->
+<Header />
+
+<!-- MOBILE NAVIGATION -->
+<div class="mx-auto max-w-[1440px] px-4 pt-4 lg:hidden">
+  <MobileNavigation>
+    <LeftSidebar />
+  </MobileNavigation>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div
+  class:list={[
+    "mx-auto grid max-w-[1440px] grid-cols-1 gap-8 px-4 py-8 lg:grid-cols-[220px_minmax(0,1fr)] lg:px-8",
+    headings.length > 0
+      ? "xl:grid-cols-[220px_minmax(0,1fr)_200px]"
+      : "xl:grid-cols-[220px_minmax(0,1fr)]"
+  ]}
+>
+
+  <!-- LEFT SIDEBAR DESKTOP -->
+  <div class="hidden lg:block">
+    <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+      <LeftSidebar />
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <main class="min-w-0">
+    <slot />
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+{headings.length > 0 && (
+  <div class="hidden xl:block">
+    <div class="sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto">
+      <RightSidebar headings={headings} />
+    </div>
+  </div>
+)}
+
+</div>
+
+<!-- FOOTER -->
+<Footer />
+
+  </body>
+</html>
