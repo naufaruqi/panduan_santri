@@ -3,7 +3,10 @@
 import BaseLayout from "./BaseLayout.astro";
 import Prose from "../components/Prose.astro";
 import { withBase } from "../utils/site";
+import ArticleNavigation from "../components/ArticleNavigation.astro";
+import RelatedArticles from "../components/RelatedArticles.astro";
 
+import type { CollectionEntry } from "astro:content";
 interface Heading {
   depth: number;
   slug: string;
@@ -20,6 +23,9 @@ interface Props {
   readingTime?: number;
   coverImage?: string;
   headings?: Heading[];
+  newerArticle?: CollectionEntry<"articles"> | null;
+  olderArticle?: CollectionEntry<"articles"> | null;
+  relatedArticles?: CollectionEntry<"articles">[];
 }
 
 const {
@@ -31,7 +37,10 @@ const {
   author,
   readingTime = 5,
   coverImage,
-  headings = []
+  headings = [],
+  newerArticle = null,
+olderArticle = null,
+relatedArticles = []
 } = Astro.props;
 ---
 
@@ -94,5 +103,14 @@ const {
     </div>
 
   </article>
+<div class="mx-auto max-w-3xl">
 
+  <ArticleNavigation
+    newerArticle={newerArticle}
+    olderArticle={olderArticle}
+  />
+
+  <RelatedArticles articles={relatedArticles} />
+
+</div>
 </BaseLayout>

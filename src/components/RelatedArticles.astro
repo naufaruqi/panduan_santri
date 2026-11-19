@@ -1,0 +1,59 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+import ArticleCard from "./ArticleCard.astro";
+
+import { getCategoryByName } from "../data/categories";
+
+interface Props {
+  articles: CollectionEntry<"articles">[];
+}
+
+const { articles } = Astro.props;
+---
+
+{articles.length > 0 && (
+  <section class="mt-12 border-t border-slate-200 pt-8">
+
+    <h2 class="mb-2 text-xl font-bold text-slate-900">
+      Artikel Terkait
+    </h2>
+
+    <p class="mb-4 text-sm text-slate-500">
+      Tulisan lain yang mungkin menarik untuk dibaca.
+    </p>
+
+    <div>
+      {articles.map((article) => {
+        const category = getCategoryByName(
+          article.data.category
+        );
+
+        return (
+          <ArticleCard
+            title={article.data.title}
+            description={article.data.description}
+            href={`/artikel/${article.id}`}
+            category={article.data.category}
+            categoryHref={
+              category
+                ? `/kategori/${category.slug}`
+                : "/"
+            }
+            author={article.data.author}
+            date={article.data.pubDate.toLocaleDateString(
+              "id-ID",
+              {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+              }
+            )}
+            readingTime={article.data.readingTime}
+          />
+        );
+      })}
+    </div>
+
+  </section>
+)}

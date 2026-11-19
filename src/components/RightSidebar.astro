@@ -31,12 +31,13 @@ const toc = headings.filter(
           <li>
             <a
               href={`#${heading.slug}`}
+              data-toc-link
               class:list={[
-                "block border-l-2 py-1.5 transition",
+                "block border-l-2 border-transparent py-1.5 transition",
                 "hover:border-brand-600 hover:text-brand-600",
                 heading.depth === 3
-                  ? "ml-3 border-transparent pl-3 text-xs text-slate-500"
-                  : "border-transparent pl-3 text-sm font-medium text-slate-700"
+                  ? "ml-3 pl-3 text-xs text-slate-500"
+                  : "pl-3 text-sm font-medium text-slate-700"
               ]}
             >
               {heading.text}
@@ -49,3 +50,60 @@ const toc = headings.filter(
 
   </aside>
 )}
+
+<script>
+  const links = Array.from(
+    document.querySelectorAll<HTMLAnchorElement>(
+      "[data-toc-link]"
+    )
+  );
+
+  const headingElements = links
+    .map((link) => {
+      const id = decodeURIComponent(link.hash.slice(1));
+      return document.getElementById(id);
+    })
+    .filter((element): element is HTMLElement => element !== null);
+
+  function setActiveHeading(id: string) {
+    links.forEach((link) => {
+      const active = link.hash === `#${id}`;
+
+      link.dataset.active = String(active);
+
+      if (active) {
+        link.setAttribute("aria-current", "location");
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  }
+
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visibleHeadings = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort(
+            (a, b) =>
+              a.boundingClientRect.top -
+              b.boundingClientRect.top
+          );
+
+        const current = visibleHeadings.at(-1);
+
+        if (current) {
+          setActiveHeading(current.target.id);
+        }
+      },
+      {
+        rootMargin: "-100px 0px -70% 0px",
+        threshold: 0
+      }
+    );
+
+    headingElements.forEach((heading) => {
+      observer.observe(heading);
+    });
+  }
+</script>

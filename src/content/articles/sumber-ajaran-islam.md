@@ -26,6 +26,24 @@ akidah, ibadah, dan akhlak.
 Al-Qur'an merupakan wahyu Allah SWT yang diturunkan
 kepada Nabi Muhammad SAW melalui Malaikat Jibril.
 
+## Al-Qur'an sebagai Sumber Ajaran Islam
+
+Berikut merupakan ilustrasi yang berkaitan dengan pembahasan.
+
+<figure>
+
+  <img
+    src="../images/artikel/contoh-al-quran.jpg"
+    alt="Ilustrasi mushaf Al-Qur'an"
+    loading="lazy"
+  />
+
+  <figcaption>
+    Ilustrasi mushaf Al-Qur'an sebagai sumber utama ajaran Islam.
+  </figcaption>
+
+</figure>
+
 ### Hadis
 
 Hadis merupakan segala sesuatu yang disandarkan

@@ -2,24 +2,59 @@
 import { getCollection, render } from "astro:content";
 
 import ArticleLayout from "../../layouts/ArticleLayout.astro";
+
 import { getCategoryByName } from "../../data/categories";
+
 export async function getStaticPaths() {
-  const articles = await getCollection(
+  const articles = (await getCollection(
     "articles",
     ({ data }) => data.draft === false
+  )).sort(
+    (a, b) =>
+      b.data.pubDate.valueOf() -
+      a.data.pubDate.valueOf()
   );
 
-  return articles.map((article) => ({
-    params: {
-      id: article.id
-    },
-    props: {
-      article
-    }
-  }));
+  return articles.map((article, index) => {
+    const newerArticle =
+      index > 0
+        ? articles[index - 1]
+        : null;
+
+    const olderArticle =
+      index < articles.length - 1
+        ? articles[index + 1]
+        : null;
+
+    const relatedArticles = articles
+      .filter(
+        (item) =>
+          item.id !== article.id &&
+          item.data.category === article.data.category
+      )
+      .slice(0, 3);
+
+    return {
+      params: {
+        id: article.id
+      },
+
+      props: {
+        article,
+        newerArticle,
+        olderArticle,
+        relatedArticles
+      }
+    };
+  });
 }
 
-const { article } = Astro.props;
+const {
+  article,
+  newerArticle,
+  olderArticle,
+  relatedArticles
+} = Astro.props;
 
 const { Content, headings } = await render(article);
 
@@ -50,6 +85,9 @@ const formattedDate = article.data.pubDate.toLocaleDateString(
   author={article.data.author}
   readingTime={article.data.readingTime}
   headings={headings}
+  newerArticle={newerArticle}
+  olderArticle={olderArticle}
+  relatedArticles={relatedArticles}
 >
   <Content />
 </ArticleLayout>

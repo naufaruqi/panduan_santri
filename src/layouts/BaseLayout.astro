@@ -5,6 +5,7 @@ import LeftSidebar from "../components/LeftSidebar.astro";
 import RightSidebar from "../components/RightSidebar.astro";
 import Footer from "../components/Footer.astro";
 import MobileNavigation from "../components/MobileNavigation.astro";
+import BackToTop from "../components/BackToTop.astro";
 
 import "../styles/global.css";
 
@@ -37,7 +38,7 @@ const {
     <meta name="description" content={description} />
   </head>
 
-  <body class="min-h-screen">
+  <body id="top" class="min-h-screen">
     
 <!-- HEADER -->
 <Header />
@@ -84,6 +85,6 @@ const {
 
 <!-- FOOTER -->
 <Footer />
-
+<BackToTop />
   </body>
 </html>

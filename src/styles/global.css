@@ -143,3 +143,33 @@ a {
   font-size: 0.875rem;
   text-align: right;
 }
+/* Penanda aktif daftar isi */
+.article-content h2,
+.article-content h3 {
+  scroll-margin-top: 6rem;
+}
+
+[data-toc-link][data-active="true"] {
+  border-left-color: var(--color-brand-600);
+  color: var(--color-brand-700);
+  font-weight: 700;
+}
+
+.article-content figure {
+  margin-block: 2rem;
+}
+
+.article-content figure img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 12px rgb(15 23 42 / 8%);
+}
+
+.article-content figcaption {
+  margin-top: 0.75rem;
+  color: #64748b;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  text-align: center;
+}
